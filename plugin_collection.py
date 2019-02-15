@@ -42,3 +42,36 @@ class PluginCollection:
         print()
         print(f'Looking for plugins under package {self.plugin_package}')
         self.walk_package(self.plugin_package)
+
+    def walk_package(self, package):
+        """Recursively walk the supplied package to retrieve all plugins
+        """
+        imported_package = __import__(package, fromlist=['blah'])
+
+        for _, pluginname, ispkg in pkgutil.iter_modules(imported_package.__path__, imported_package.__name__ + '.'):
+            if not ispkg:
+                plugin_module = __import__(pluginname, fromlist=['blah'])
+                clsmembers = inspect.getmembers(plugin_module, inspect.isclass)
+                for (_, c) in clsmembers:
+                    if issubclass(c, Plugin):
+                        print(f'    Found plugin class: {c.__module__}.{c.__name__}')
+                        self.plugins.append(c())
+
+
+        # Now that we have looked at all the modules in the current package, start looking
+        # recursively for additional modules in sub packages
+        if isinstance(imported_package.__path__, str):
+            if imported_package.__path__ not in self.seen_paths:
+                self.seen_paths.append(imported_package.__path__)
+                child_pkgs = [p for p in os.listdir(imported_package.__path__) if os.path.isdir(os.path.join(imported_package.__path__, p))]
+                for child_pkg in child_pkgs:
+                    self.walk_package(package + '.' + child_pkg)
+        else:
+            for pkg_path in imported_package.__path__:
+                if pkg_path not in self.seen_paths:
+                    self.seen_paths.append(pkg_path)
+
+                    child_pkgs = [p for p in os.listdir(pkg_path) if os.path.isdir(os.path.join(pkg_path, p))]
+
+                    for child_pkg in child_pkgs:
+                        self.walk_package(package + '.' + child_pkg)
