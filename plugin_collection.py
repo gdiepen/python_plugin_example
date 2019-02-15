@@ -34,6 +34,9 @@ class PluginCollection:
 
 
     def reload_plugins(self):
+        """Reset the list of all plugins and initiate the walk over the main
+        provided plugin package to load all available plugins
+        """
         self.plugins = []
         self.seen_paths = []
         print()
