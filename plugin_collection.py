@@ -3,7 +3,7 @@ import os
 import pkgutil
 
 
-class Plugin:
+class Plugin(object):
     """Base class that each plugin must inherit from. within this class
     you must define the methods that all of your plugins must implement
     """
@@ -20,7 +20,7 @@ class Plugin:
 
 
 
-class PluginCollection:
+class PluginCollection(object):
     """Upon creation, this class will read the plugins package for modules
     that contain a class definition that is inheriting from the Plugin class
     """
