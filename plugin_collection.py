@@ -30,5 +30,12 @@ class PluginCollection:
         when an instance of the PluginCollection object is created
         """
         self.plugin_package = plugin_package
-        self.walk_folder()
+        self.reload_plugins()
 
+
+    def reload_plugins(self):
+        self.plugins = []
+        self.seen_paths = []
+        print()
+        print(f'Looking for plugins under package {self.plugin_package}')
+        self.walk_package(self.plugin_package)
