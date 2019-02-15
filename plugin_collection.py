@@ -43,6 +43,15 @@ class PluginCollection:
         print(f'Looking for plugins under package {self.plugin_package}')
         self.walk_package(self.plugin_package)
 
+
+    def apply_all_plugins_on_value(self, argument):
+        """Apply all of the plugins on the argument supplied to this function
+        """
+        print()
+        print(f'Applying all plugins on value {argument}:')
+        for plugin in self.plugins:
+            print(f'    Applying {plugin.description} on value {argument} yields value {plugin.perform_operation(argument)}')
+
     def walk_package(self, package):
         """Recursively walk the supplied package to retrieve all plugins
         """
