@@ -1,6 +1,6 @@
-import plugin_collection
+from plugin_collection import Plugin
 
-class DoublePositive(plugin_collection.Plugin):
+class DoublePositive(Plugin):
     """This plugin will just multiply the argument with the value 2
     """
     def __init__(self):
