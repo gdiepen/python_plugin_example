@@ -9,7 +9,7 @@ class Plugin:
     """
 
     def __init__(self):
-        pass
+        self.description = 'UNKNOWN'
 
     def perform_operation(self, argument):
         """The method that we expect all plugins to implement. This is the
