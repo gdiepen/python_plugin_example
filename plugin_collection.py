@@ -32,5 +32,3 @@ class PluginCollection:
         self.plugin_package = plugin_package
         self.walk_folder()
 
-    def walk_folder(self):
-        pass
