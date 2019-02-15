@@ -1,3 +1,8 @@
+import inspect
+import os
+import pkgutil
+
+
 class Plugin:
     """Base class that each plugin must inherit from. within this class
     you must define the methods that all of your plugins must implement
@@ -16,15 +21,15 @@ class Plugin:
 
 
 class PluginCollection:
-    """Upon creation, this class will read the plugins folder for modules
+    """Upon creation, this class will read the plugins package for modules
     that contain a class definition that is inheriting from the Plugin class
     """
 
-    def __init__(self, plugin_folder):
+    def __init__(self, plugin_package):
         """Constructor that initiates the reading of all available plugins
         when an instance of the PluginCollection object is created
         """
-        self.plugin_folder = plugin_folder
+        self.plugin_package = plugin_package
         self.walk_folder()
 
     def walk_folder(self):
