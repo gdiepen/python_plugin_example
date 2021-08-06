@@ -1,4 +1,4 @@
-"""Main applicatoin that demonstrates the functionality of
+"""Main application that demonstrates the functionality of
 the dynamic plugins and the PluginCollection class
 """
 
