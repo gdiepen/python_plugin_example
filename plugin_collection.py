@@ -1,12 +1,16 @@
+""" Simple Plugin implementation in Python
+"""
+
 import inspect
 import os
 import pkgutil
 
 
-class Plugin(object):
-    """Base class that each plugin must inherit from. within this class
+class Plugin():
+    """Base class that each plugin must inherit from. Within this class
     you must define the methods that all of your plugins must implement
     """
+    # pylint: disable=too-few-public-methods
 
     def __init__(self):
         self.description = 'UNKNOWN'
@@ -20,7 +24,7 @@ class Plugin(object):
 
 
 
-class PluginCollection(object):
+class PluginCollection():
     """Upon creation, this class will read the plugins package for modules
     that contain a class definition that is inheriting from the Plugin class
     """
@@ -50,22 +54,25 @@ class PluginCollection(object):
         print()
         print(f'Applying all plugins on value {argument}:')
         for plugin in self.plugins:
-            print(f'    Applying {plugin.description} on value {argument} yields value {plugin.perform_operation(argument)}')
+            print(f'    Applying {plugin.description} on value {argument}'\
+                  f' yields value {plugin.perform_operation(argument)}')
 
     def walk_package(self, package):
         """Recursively walk the supplied package to retrieve all plugins
         """
         imported_package = __import__(package, fromlist=['blah'])
 
-        for _, pluginname, ispkg in pkgutil.iter_modules(imported_package.__path__, imported_package.__name__ + '.'):
+        for _, pluginname, ispkg in pkgutil.iter_modules(
+            imported_package.__path__, imported_package.__name__ + '.'
+        ):
             if not ispkg:
                 plugin_module = __import__(pluginname, fromlist=['blah'])
                 clsmembers = inspect.getmembers(plugin_module, inspect.isclass)
-                for (_, c) in clsmembers:
+                for (_, cls) in clsmembers:
                     # Only add classes that are a sub class of Plugin, but NOT Plugin itself
-                    if issubclass(c, Plugin) & (c is not Plugin):
-                        print(f'    Found plugin class: {c.__module__}.{c.__name__}')
-                        self.plugins.append(c())
+                    if issubclass(cls, Plugin) & (cls is not Plugin):
+                        print(f'    Found plugin class: {cls.__module__}.{cls.__name__}')
+                        self.plugins.append(cls())
 
 
         # Now that we have looked at all the modules in the current package, start looking
@@ -74,14 +81,18 @@ class PluginCollection(object):
         if isinstance(imported_package.__path__, str):
             all_current_paths.append(imported_package.__path__)
         else:
-            all_current_paths.extend([x for x in imported_package.__path__])
+            all_current_paths.extend(imported_package.__path__)
 
         for pkg_path in all_current_paths:
             if pkg_path not in self.seen_paths:
                 self.seen_paths.append(pkg_path)
 
                 # Get all sub directory of the current package path directory
-                child_pkgs = [p for p in os.listdir(pkg_path) if os.path.isdir(os.path.join(pkg_path, p))]
+                child_pkgs = [
+                    p for p in os.listdir(pkg_path)
+                    if os.path.isdir(os.path.join(pkg_path, p))
+                ]
+
 
                 # For each sub directory, apply the walk_package method recursively
                 for child_pkg in child_pkgs:
